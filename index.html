@@ -1142,6 +1142,7 @@ function renderContact() {
 window.addEventListener('DOMContentLoaded', () => {
   updateCartBadge();
   render();
+  window.addEventListener('hashchange', render);
   setupHamburger();
   setupSearch();
   setupBackToTop();
