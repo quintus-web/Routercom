@@ -1148,7 +1148,8 @@ window.addEventListener('DOMContentLoaded', () => {
   setupBackToTop();
 
   document.getElementById('app').addEventListener('click', function(e) {
-    const wishlistBtn = e.target.closest('.wishlist-btn');
+    const target = e.target.nodeType === Node.TEXT_NODE ? e.target.parentElement : e.target;
+    const wishlistBtn = target.closest('.wishlist-btn');
     if (wishlistBtn) {
       e.preventDefault();
       e.stopPropagation();
