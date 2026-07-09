@@ -327,6 +327,7 @@
   <div class="nav-inner">
     <a href="#/" class="logo"><span class="mono copper" style="font-size:12px;">[01]</span> ROUTER<span class="copper">COM</span> <span style="font-weight:400; color:var(--ink-muted); font-size:12px; letter-spacing:0.05em; margin-left:4px;">SOLUTIONS</span></a>
     <nav class="links">
+      <a href="#/">Home</a>
       <a href="#/products">All Products</a>
       <a href="#/products?category=Routers">Routers</a>
       <a href="#/products?category=Access%20Points">Access Points</a>
@@ -1172,6 +1173,12 @@ function setupHamburger() {
     nav.classList.toggle('mobile-open');
     btn.classList.toggle('open');
   };
+  const navLinks = document.querySelectorAll('nav.links a');
+  navLinks.forEach(a => a.addEventListener('click', () => {
+    const nav = document.querySelector('nav.links');
+    nav.classList.remove('mobile-open');
+    btn.classList.remove('open');
+  }));
 }
 
 function setupSearch() {
