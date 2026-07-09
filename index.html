@@ -1159,8 +1159,8 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-window.onerror = function() {
-  document.getElementById('app').innerHTML = `<main><div class="error-page"><h1>500</h1><h2>Server Error</h2><p>Something went wrong on our end. Please try again in a moment.</p><a href="#/" class="btn-primary" style="display:inline-block;">Return home</a><span class="mono">HTTP/1.1 500 Internal Server Error</span></div></main>`;
+window.onerror = function(msg, src, line, col) {
+  console.error('RouterCom error:', msg, 'at', src, line + ':' + col);
   return true;
 };
 
@@ -1196,15 +1196,13 @@ function attachGlobalHandlers() {
   const catalogSearch = document.getElementById('catalog-search');
   if (catalogSearch && !catalogSearch.dataset.bound) {
     catalogSearch.dataset.bound = 'true';
-    catalogSearch.addEventListener('input', (e) => {
+    catalogSearch.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
       const q = e.target.value.trim();
       const { path, params } = parseHash();
-      if (path === '/products') {
-        const newCat = params.get('category') || '';
-        location.hash = '#/products' + (newCat ? '?category=' + newCat + (q ? '&q=' + encodeURIComponent(q) : '') : (q ? '?q=' + encodeURIComponent(q) : ''));
-      } else {
-        location.hash = '#/products' + (q ? '?q=' + encodeURIComponent(q) : '');
-      }
+      const newCat = params.get('category') || '';
+      const base = '#/products' + (newCat ? '?category=' + newCat : '');
+      location.hash = q ? base + (newCat ? '&' : '?') + 'q=' + encodeURIComponent(q) : base;
     });
   }
   const deliverySel = document.getElementById('delivery-location');
