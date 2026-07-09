@@ -707,17 +707,19 @@ function productCardHTML(p) {
   const bundlePrice = bundle ? getBundlePrice(p.slug) : null;
   return `
   <div class="quick-view">
-    <a href="#/products/${p.slug}" class="card" style="position:relative;">
-      <div class="card-img">${deviceImg(p.image, p.name)}</div>
+    <div class="card" style="position:relative;">
+      <a href="#/products/${p.slug}" style="display:block; text-decoration:none; color:inherit;">
+        <div class="card-img">${deviceImg(p.image, p.name)}</div>
+        <div class="card-body">
+          <div class="card-top"><span class="brand">${p.brand}</span>${statusDot(p.stock)}</div>
+          <h3>${p.name}</h3>
+          <p class="desc">${p.shortDesc}</p>
+          <div class="price">KES ${(bundle ? bundlePrice : p.price).toLocaleString()}${bundle ? ' <span style="text-decoration:line-through; color:var(--ink-muted); font-size:11px;">KES '+p.price.toLocaleString()+'</span>' : ''}</div>
+        </div>
+      </a>
       <button class="wishlist-btn ${inWishlist?'active':''}" data-slug="${p.slug}" aria-label="Save for later">${inWishlist?'♥':'♡'}</button>
       ${bundle ? `<div style="position:absolute; top:8px; left:8px; background:var(--copper); color:var(--base); font-family:'IBM Plex Mono'; font-size:10px; padding:3px 8px; border-radius:4px; z-index:2; font-weight:600;">SAVE ${Math.round((1 - getBundlePrice(p.slug)/p.price)*100)}%</div>` : ''}
-      <div class="card-body">
-        <div class="card-top"><span class="brand">${p.brand}</span>${statusDot(p.stock)}</div>
-        <h3>${p.name}</h3>
-        <p class="desc">${p.shortDesc}</p>
-        <div class="price">KES ${(bundle ? bundlePrice : p.price).toLocaleString()}${bundle ? ' <span style="text-decoration:line-through; color:var(--ink-muted); font-size:11px;">KES '+p.price.toLocaleString()+'</span>' : ''}</div>
-      </div>
-    </a>
+    </div>
     <div class="qv-popup">
       <div class="qv-img">${deviceImg(p.image, p.name)}</div>
       <div class="qv-name">${p.name}</div>
@@ -1143,6 +1145,16 @@ window.addEventListener('DOMContentLoaded', () => {
   setupHamburger();
   setupSearch();
   setupBackToTop();
+
+  document.getElementById('app').addEventListener('click', function(e) {
+    const wishlistBtn = e.target.closest('.wishlist-btn');
+    if (wishlistBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const slug = wishlistBtn.dataset.slug;
+      if (slug) toggleWishlist(slug);
+    }
+  });
 });
 
 window.onerror = function() {
@@ -1179,13 +1191,6 @@ function setupBackToTop() {
 }
 
 function attachGlobalHandlers() {
-  document.querySelectorAll('.wishlist-btn').forEach(btn => {
-    btn.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (btn.dataset.slug) toggleWishlist(btn.dataset.slug);
-    };
-  });
   const catalogSearch = document.getElementById('catalog-search');
   if (catalogSearch && !catalogSearch.dataset.bound) {
     catalogSearch.dataset.bound = 'true';
